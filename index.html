@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ApplyPilot — Start Applying Smarter</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0F0F0F;
+    --surface: #1A1A1A;
+    --surface2: #242424;
+    --border: #2E2E2E;
+    --accent: #6366F1;
+    --accent-dim: rgba(99,102,241,0.15);
+    --accent-hover: #818CF8;
+    --text: #F5F5F5;
+    --muted: #888;
+    --success: #22C55E;
+    --error: #EF4444;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 0 16px 60px;
+  }
+
+  /* ── Header ── */
+  header {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 32px 0 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--accent); }
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--accent-dim);
+    color: var(--accent-hover);
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    max-width: 640px;
+    margin: 0 auto 40px;
+  }
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    cursor: pointer;
+  }
+  .step-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    background: var(--surface);
+  }
+  .step.active .step-num {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: white;
+  }
+  .step.done .step-num {
+    border-color: var(--success);
+    background: var(--success);
+    color: white;
+  }
+  .step-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: color 0.3s;
+  }
+  .step.active .step-label { color: var(--text); }
+  .step.done .step-label { color: var(--success); }
+  .step-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin: 0 12px;
+    transition: background 0.3s;
+  }
+  .step-line.done { background: var(--success); }
+
+  /* ── Card ── */
+  .card {
+    max-width: 640px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 36px;
+    display: none;
+  }
+  .card.active { display: block; }
+
+  .card-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+  .card-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 32px;
+    line-height: 1.5;
+  }
+
+  /* ── Form fields ── */
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #CCC;
+    letter-spacing: 0.2px;
+  }
+  .field label .req { color: var(--accent); margin-left: 2px; }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+  }
+  input::placeholder, textarea::placeholder { color: #555; }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* Tags input */
+  .tags-wrap {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 48px;
+    cursor: text;
+    transition: border-color 0.2s;
+  }
+  .tags-wrap:focus-within { border-color: var(--accent); }
+  .tag {
+    background: var(--accent-dim);
+    color: var(--accent-hover);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tag button {
+    background: none;
+    border: none;
+    color: var(--accent-hover);
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    opacity: 0.7;
+  }
+  .tag button:hover { opacity: 1; }
+  .tags-input {
+    border: none;
+    background: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    flex: 1;
+    min-width: 120px;
+    padding: 4px 4px;
+  }
+  .tags-hint {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* Upload zone */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: var(--accent-dim); }
+  .upload-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: none;
+    padding: 0;
+  }
+  .upload-icon { font-size: 32px; margin-bottom: 10px; }
+  .upload-label { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .upload-sub { font-size: 12px; color: var(--muted); }
+  .file-chosen {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent-dim);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-top: 12px;
+  }
+  .file-chosen span { font-size: 13px; color: var(--accent-hover); font-weight: 500; flex: 1; }
+  .file-chosen button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  /* Template grid */
+  .template-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  .template-card {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .template-card:hover { border-color: #555; transform: translateY(-2px); }
+  .template-card.selected { border-color: var(--accent); }
+  .template-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: white;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+  }
+  .template-preview {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: #fff;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow: hidden;
+    padding: 8px;
+  }
+  /* SVG resume previews */
+  .template-preview svg { width: 100%; height: 100%; }
+  .template-info {
+    padding: 10px 12px;
+    background: var(--surface2);
+  }
+  .template-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .template-desc {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    justify-content: flex-end;
+  }
+  .btn {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-ghost:hover { border-color: #555; color: var(--text); }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Success screen */
+  .success-screen {
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 60px 20px;
+    display: none;
+  }
+  .success-screen.active { display: block; }
+  .success-icon {
+    width: 72px;
+    height: 72px;
+    background: rgba(34,197,94,0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 24px;
+  }
+  .success-title { font-size: 26px; font-weight: 700; margin-bottom: 10px; }
+  .success-sub { font-size: 15px; color: var(--muted); line-height: 1.6; }
+
+  /* Error banner */
+  .error-banner {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: #FCA5A5;
+    margin-top: 16px;
+    display: none;
+  }
+  .error-banner.show { display: block; }
+
+  /* Loading */
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 480px) {
+    .card { padding: 24px 20px; }
+    .row-2 { grid-template-columns: 1fr; }
+    .template-grid { grid-template-columns: 1fr 1fr; }
+    .btn-row { flex-direction: column-reverse; }
+    .btn { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Apply<span>Pilot</span></div>
+  <div class="badge">Beta</div>
+</header>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="steps">
+    <div class="step active" id="s1" onclick="goStep(1)">
+      <div class="step-num" id="sn1">1</div>
+      <div class="step-label">Your Info</div>
+    </div>
+    <div class="step-line" id="sl1"></div>
+    <div class="step active" id="s2" onclick="goStep(2)" style="opacity:0.4;pointer-events:none">
+      <div class="step-num" id="sn2">2</div>
+      <div class="step-label">Job Preferences</div>
+    </div>
+    <div class="step-line" id="sl2"></div>
+    <div class="step" id="s3" onclick="goStep(3)" style="opacity:0.4;pointer-events:none">
+      <div class="step-num" id="sn3">3</div>
+      <div class="step-label">Resume Template</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Step 1: Personal Info + CV Upload ── -->
+<div class="card active" id="step1">
+  <div class="card-title">Let's get to know you</div>
+  <div class="card-sub">Fill in your details and upload your current resume. We'll use this as the foundation for every tailored application.</div>
+
+  <div class="row-2">
+    <div class="field">
+      <label>Full Name <span class="req">*</span></label>
+      <input type="text" id="fullName" placeholder="Himanshu Kushwaha">
+    </div>
+    <div class="field">
+      <label>Email <span class="req">*</span></label>
+      <input type="email" id="email" placeholder="you@example.com">
+    </div>
+  </div>
+
+  <div class="row-2">
+    <div class="field">
+      <label>Phone</label>
+      <input type="text" id="phone" placeholder="+91 89602 75814">
+    </div>
+    <div class="field">
+      <label>Location <span class="req">*</span></label>
+      <input type="text" id="location" placeholder="Bangalore, India">
+    </div>
+  </div>
+
+  <div class="row-2">
+    <div class="field">
+      <label>LinkedIn URL</label>
+      <input type="text" id="linkedin" placeholder="linkedin.com/in/yourname">
+    </div>
+    <div class="field">
+      <label>GitHub URL</label>
+      <input type="text" id="github" placeholder="github.com/yourname">
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Upload your current resume <span class="req">*</span></label>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="cvFile" accept=".pdf,.doc,.docx,.txt" onchange="handleFile(this)">
+      <div class="upload-icon">📄</div>
+      <div class="upload-label">Drop your resume here</div>
+      <div class="upload-sub">PDF, DOC, DOCX or TXT · Max 5MB</div>
+    </div>
+    <div class="file-chosen" id="fileChosen" style="display:none">
+      <span>📎</span>
+      <span id="fileName"></span>
+      <button onclick="clearFile()">✕</button>
+    </div>
+  </div>
+
+  <div class="error-banner" id="err1"></div>
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="nextStep(1)">Continue →</button>
+  </div>
+</div>
+
+<!-- ── Step 2: Job Preferences ── -->
+<div class="card" id="step2">
+  <div class="card-title">What are you looking for?</div>
+  <div class="card-sub">Tell us about your ideal role. We'll use this to filter and rank jobs that actually match what you want.</div>
+
+  <div class="field">
+    <label>Target Job Roles <span class="req">*</span></label>
+    <div class="tags-wrap" onclick="document.getElementById('roleInput').focus()">
+      <div id="roleTags"></div>
+      <input class="tags-input" id="roleInput" placeholder="Type a role and press Enter..." onkeydown="addTag(event,'roleInput','roleTags','roles')">
+    </div>
+    <div class="tags-hint">e.g. Software Engineer, .NET Developer, Backend Developer</div>
+  </div>
+
+  <div class="field">
+    <label>Preferred Locations <span class="req">*</span></label>
+    <div class="tags-wrap" onclick="document.getElementById('locInput').focus()">
+      <div id="locTags"></div>
+      <input class="tags-input" id="locInput" placeholder="Type a location and press Enter..." onkeydown="addTag(event,'locInput','locTags','locations')">
+    </div>
+    <div class="tags-hint">e.g. Bangalore, Remote, Pune</div>
+  </div>
+
+  <div class="row-2">
+    <div class="field">
+      <label>Years of Experience <span class="req">*</span></label>
+      <input type="number" id="yoe" placeholder="2" min="0" max="40">
+    </div>
+    <div class="field">
+      <label>Expected Salary (LPA)</label>
+      <input type="text" id="salary" placeholder="10-15 LPA">
+    </div>
+  </div>
+
+  <div class="row-2">
+    <div class="field">
+      <label>Notice Period</label>
+      <select id="notice">
+        <option value="">Select...</option>
+        <option>Immediate</option>
+        <option>15 days</option>
+        <option>30 days</option>
+        <option>60 days</option>
+        <option>90 days</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Match Threshold</label>
+      <select id="threshold">
+        <option value="60">60% and above</option>
+        <option value="70" selected>70% and above (recommended)</option>
+        <option value="80">80% and above</option>
+        <option value="90">90% and above</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Key Skills / Tech Stack</label>
+    <textarea id="techStack" placeholder="C#, .NET Core, ASP.NET MVC, Azure, SQL Server, Entity Framework..."></textarea>
+  </div>
+
+  <div class="error-banner" id="err2"></div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+    <button class="btn btn-primary" onclick="nextStep(2)">Continue →</button>
+  </div>
+</div>
+
+<!-- ── Step 3: Template Selection ── -->
+<div class="card" id="step3">
+  <div class="card-title">Choose your resume style</div>
+  <div class="card-sub">Pick the template that best represents you. We'll use this layout for all 20 tailored resumes generated for your shortlisted jobs.</div>
+
+  <div class="template-grid">
+    <!-- Template 1: Jake's Resume -->
+    <div class="template-card" id="t1" onclick="selectTemplate(1)">
+      <div class="template-preview">
+        <svg viewBox="0 0 160 210" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="210" fill="#fff"/>
+          <!-- Header -->
+          <text x="80" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="#111" font-family="serif">Jake Morrison</text>
+          <text x="80" y="27" text-anchor="middle" font-size="5" fill="#555" font-family="sans-serif">jake@email.com · linkedin.com/in/jake · github.com/jake</text>
+          <line x1="10" y1="31" x2="150" y2="31" stroke="#111" stroke-width="0.8"/>
+          <!-- Education -->
+          <text x="10" y="40" font-size="7" font-weight="700" fill="#111" font-family="sans-serif">EDUCATION</text>
+          <line x1="10" y1="42" x2="150" y2="42" stroke="#999" stroke-width="0.3"/>
+          <text x="10" y="50" font-size="5.5" font-weight="600" fill="#111" font-family="sans-serif">State University</text>
+          <text x="150" y="50" text-anchor="end" font-size="5" fill="#555" font-family="sans-serif">Aug 2020 – May 2024</text>
+          <text x="10" y="57" font-size="5" fill="#555" font-family="sans-serif">B.S. Computer Science · GPA: 3.8</text>
+          <!-- Experience -->
+          <text x="10" y="68" font-size="7" font-weight="700" fill="#111" font-family="sans-serif">EXPERIENCE</text>
+          <line x1="10" y1="70" x2="150" y2="70" stroke="#999" stroke-width="0.3"/>
+          <text x="10" y="78" font-size="5.5" font-weight="600" fill="#111" font-family="sans-serif">Software Engineer · Capgemini</text>
+          <text x="150" y="78" text-anchor="end" font-size="5" fill="#555" font-family="sans-serif">Apr 2024 – Present</text>
+          <circle cx="13" cy="85" r="1" fill="#555"/>
+          <text x="17" y="87" font-size="4.5" fill="#333" font-family="sans-serif">Built integration workflows using Azure Logic Apps</text>
+          <circle cx="13" cy="92" r="1" fill="#555"/>
+          <text x="17" y="94" font-size="4.5" fill="#333" font-family="sans-serif">Implemented API management via Azure APIM</text>
+          <circle cx="13" cy="99" r="1" fill="#555"/>
+          <text x="17" y="101" font-size="4.5" fill="#333" font-family="sans-serif">Developed ASP.NET MVC enterprise applications</text>
+          <!-- Projects -->
+          <text x="10" y="112" font-size="7" font-weight="700" fill="#111" font-family="sans-serif">PROJECTS</text>
+          <line x1="10" y1="114" x2="150" y2="114" stroke="#999" stroke-width="0.3"/>
+          <text x="10" y="122" font-size="5.5" font-weight="600" fill="#111" font-family="sans-serif">CHANEL Integration · Azure</text>
+          <circle cx="13" cy="129" r="1" fill="#555"/>
+          <text x="17" y="131" font-size="4.5" fill="#333" font-family="sans-serif">Delivered HFT solution for global data movement</text>
+          <!-- Skills -->
+          <text x="10" y="143" font-size="7" font-weight="700" fill="#111" font-family="sans-serif">TECHNICAL SKILLS</text>
+          <line x1="10" y1="145" x2="150" y2="145" stroke="#999" stroke-width="0.3"/>
+          <text x="10" y="153" font-size="5" fill="#333" font-family="sans-serif"><tspan font-weight="600">Languages:</tspan> C#, Java, SQL</text>
+          <text x="10" y="160" font-size="5" fill="#333" font-family="sans-serif"><tspan font-weight="600">Frameworks:</tspan> .NET Core, ASP.NET MVC, Entity Framework</text>
+          <text x="10" y="167" font-size="5" fill="#333" font-family="sans-serif"><tspan font-weight="600">Cloud:</tspan> Azure (Logic Apps, APIM, Service Bus, ADF)</text>
+        </svg>
+      </div>
+      <div class="template-info">
+        <div class="template-name">Jake's Resume</div>
+        <div class="template-desc">Classic single-column · ATS-safe</div>
+      </div>
+    </div>
+
+    <!-- Template 2: Two-column Modern -->
+    <div class="template-card" id="t2" onclick="selectTemplate(2)">
+      <div class="template-preview">
+        <svg viewBox="0 0 160 210" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="210" fill="#fff"/>
+          <!-- Left sidebar -->
+          <rect width="52" height="210" fill="#1E293B"/>
+          <!-- Avatar placeholder -->
+          <circle cx="26" cy="28" r="14" fill="#334155"/>
+          <text x="26" y="32" text-anchor="middle" font-size="10" fill="#94A3B8" font-family="sans-serif">JM</text>
+          <!-- Sidebar content -->
+          <text x="26" y="55" text-anchor="middle" font-size="5.5" font-weight="700" fill="#fff" font-family="sans-serif">CONTACT</text>
+          <text x="26" y="63" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">jake@email.com</text>
+          <text x="26" y="70" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">+91 89602 75814</text>
+          <text x="26" y="77" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">Bangalore, India</text>
+          <text x="26" y="90" text-anchor="middle" font-size="5.5" font-weight="700" fill="#fff" font-family="sans-serif">SKILLS</text>
+          <text x="26" y="98" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">C# · Java · SQL</text>
+          <text x="26" y="105" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">.NET Core</text>
+          <text x="26" y="112" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">ASP.NET MVC</text>
+          <text x="26" y="119" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">Azure Cloud</text>
+          <text x="26" y="126" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">SQL Server</text>
+          <text x="26" y="138" text-anchor="middle" font-size="5.5" font-weight="700" fill="#fff" font-family="sans-serif">EDUCATION</text>
+          <text x="26" y="146" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">B.Tech CSE</text>
+          <text x="26" y="153" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">GLA University</text>
+          <text x="26" y="160" text-anchor="middle" font-size="4" fill="#64748B" font-family="sans-serif">2020 – 2024</text>
+          <!-- Right content -->
+          <text x="62" y="18" font-size="11" font-weight="700" fill="#0F172A" font-family="sans-serif">Jake Morrison</text>
+          <text x="62" y="26" font-size="5.5" fill="#6366F1" font-family="sans-serif">Software Engineer</text>
+          <line x1="58" y1="30" x2="155" y2="30" stroke="#E2E8F0" stroke-width="0.5"/>
+          <text x="62" y="39" font-size="6" font-weight="700" fill="#0F172A" font-family="sans-serif">EXPERIENCE</text>
+          <text x="62" y="47" font-size="5.5" font-weight="600" fill="#0F172A" font-family="sans-serif">Software Engineer</text>
+          <text x="62" y="53" font-size="4.5" fill="#6366F1" font-family="sans-serif">Capgemini · Apr 2024–Present</text>
+          <circle cx="64" cy="60" r="1" fill="#6366F1"/>
+          <text x="68" y="62" font-size="4" fill="#475569" font-family="sans-serif">Azure integration workflows</text>
+          <circle cx="64" cy="67" r="1" fill="#6366F1"/>
+          <text x="68" y="69" font-size="4" fill="#475569" font-family="sans-serif">API management via APIM</text>
+          <circle cx="64" cy="74" r="1" fill="#6366F1"/>
+          <text x="68" y="76" font-size="4" fill="#475569" font-family="sans-serif">ASP.NET MVC applications</text>
+          <text x="62" y="87" font-size="6" font-weight="700" fill="#0F172A" font-family="sans-serif">PROJECTS</text>
+          <text x="62" y="95" font-size="5.5" font-weight="600" fill="#0F172A" font-family="sans-serif">CHANEL — Azure Integration</text>
+          <circle cx="64" cy="102" r="1" fill="#6366F1"/>
+          <text x="68" y="104" font-size="4" fill="#475569" font-family="sans-serif">HFT secure data movement solution</text>
+        </svg>
+      </div>
+      <div class="template-info">
+        <div class="template-name">Modern Sidebar</div>
+        <div class="template-desc">Two-column · Visual · Tech roles</div>
+      </div>
+    </div>
+
+    <!-- Template 3: Minimal Clean -->
+    <div class="template-card" id="t3" onclick="selectTemplate(3)">
+      <div class="template-preview">
+        <svg viewBox="0 0 160 210" xmlns="http://www.w3.org/2000/svg">
+          <rect width="160" height="210" fill="#FAFAFA"/>
+          <!-- Top accent bar -->
+          <rect width="160" height="4" fill="#6366F1"/>
+          <!-- Header -->
+          <text x="12" y="22" font-size="13" font-weight="700" fill="#111" font-family="sans-serif">Jake Morrison</text>
+          <text x="12" y="31" font-size="5" fill="#6366F1" font-family="sans-serif">Software Engineer · Bangalore, India</text>
+          <text x="12" y="39" font-size="4.5" fill="#888" font-family="sans-serif">jake@email.com · linkedin.com/jake · github.com/jake</text>
+          <!-- Divider -->
+          <line x1="12" y1="44" x2="148" y2="44" stroke="#E5E5E5" stroke-width="0.5"/>
+          <!-- Summary -->
+          <text x="12" y="53" font-size="4.5" fill="#444" font-family="sans-serif">Performance-driven engineer with expertise in .NET and Azure</text>
+          <text x="12" y="59" font-size="4.5" fill="#444" font-family="sans-serif">integration services. Building scalable enterprise solutions.</text>
+          <line x1="12" y1="64" x2="148" y2="64" stroke="#E5E5E5" stroke-width="0.5"/>
+          <!-- Experience -->
+          <rect x="12" y="68" width="2" height="16" fill="#6366F1" rx="1"/>
+          <text x="18" y="76" font-size="6" font-weight="700" fill="#111" font-family="sans-serif">Experience</text>
+          <text x="18" y="83" font-size="5" fill="#888" font-family="sans-serif">Software Engineer · Capgemini · 2024–Present</text>
+          <text x="18" y="91" font-size="4.5" fill="#555" font-family="sans-serif">· Azure Logic Apps, APIM, Service Bus</text>
+          <text x="18" y="97" font-size="4.5" fill="#555" font-family="sans-serif">· ASP.NET MVC enterprise applications</text>
+          <text x="18" y="103" font-size="4.5" fill="#555" font-family="sans-serif">· CI/CD via Azure DevOps pipelines</text>
+          <line x1="12" y1="108" x2="148" y2="108" stroke="#E5E5E5" stroke-width="0.5"/>
+          <!-- Skills -->
+          <rect x="12" y="112" width="2" height="16" fill="#6366F1" rx="1"/>
+          <text x="18" y="120" font-size="6" font-weight="700" fill="#111" font-family="sans-serif">Skills</text>
+          <!-- Skill pills -->
+          <rect x="18" y="123" width="22" height="7" rx="3" fill="#EEF2FF"/>
+          <text x="29" y="128.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">C#</text>
+          <rect x="44" y="123" width="22" height="7" rx="3" fill="#EEF2FF"/>
+          <text x="55" y="128.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">Java</text>
+          <rect x="70" y="123" width="30" height="7" rx="3" fill="#EEF2FF"/>
+          <text x="85" y="128.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">.NET Core</text>
+          <rect x="18" y="133" width="28" height="7" rx="3" fill="#EEF2FF"/>
+          <text x="32" y="138.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">Azure</text>
+          <rect x="50" y="133" width="32" height="7" rx="3" fill="#EEF2FF"/>
+          <text x="66" y="138.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">SQL Server</text>
+          <line x1="12" y1="144" x2="148" y2="144" stroke="#E5E5E5" stroke-width="0.5"/>
+          <!-- Education -->
+          <rect x="12" y="148" width="2" height="16" fill="#6366F1" rx="1"/>
+          <text x="18" y="156" font-size="6" font-weight="700" fill="#111" font-family="sans-serif">Education</text>
+          <text x="18" y="163" font-size="5" fill="#888" font-family="sans-serif">B.Tech Computer Science · GLA University · 2024</text>
+        </svg>
+      </div>
+      <div class="template-info">
+        <div class="template-name">Minimal Clean</div>
+        <div class="template-desc">Accent stripe · Modern minimal</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-banner" id="err3"></div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep(2)">← Back</button>
+    <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">🚀 Start Applying</button>
+  </div>
+</div>
+
+<!-- Success -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">✅</div>
+  <div class="success-title">You're all set!</div>
+  <div class="success-sub">We've received your profile and preferences.<br>ApplyPilot will now scan jobs and generate tailored resumes for you.<br><br>Check your email for updates.</div>
+</div>
+
+<script>
+  // ── Config ──
+  const N8N_WEBHOOK_URL = 'YOUR_N8N_WEBHOOK_URL_HERE';
+
+  // ── State ──
+  let currentStep = 1;
+  let selectedTemplate = null;
+  let cvFile = null;
+  let tags = { roles: [], locations: [] };
+
+  // ── Navigation ──
+  function goStep(n) {
+    if (n > currentStep) return;
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    currentStep = n;
+    updateProgress();
+  }
+
+  function nextStep(from) {
+    if (!validateStep(from)) return;
+    const next = from + 1;
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    document.getElementById('step' + next).classList.add('active');
+    currentStep = next;
+
+    // unlock next step in progress
+    const s = document.getElementById('s' + next);
+    s.style.opacity = '1';
+    s.style.pointerEvents = 'auto';
+
+    updateProgress();
+  }
+
+  function updateProgress() {
+    [1,2,3].forEach(i => {
+      const sn = document.getElementById('sn' + i);
+      const s = document.getElementById('s' + i);
+      s.classList.remove('active','done');
+      if (i < currentStep) {
+        s.classList.add('done');
+        sn.innerHTML = '✓';
+      } else if (i === currentStep) {
+        s.classList.add('active');
+        sn.innerHTML = i;
+      } else {
+        sn.innerHTML = i;
+      }
+    });
+    [1,2].forEach(i => {
+      const line = document.getElementById('sl' + i);
+      line.classList.toggle('done', i < currentStep);
+    });
+  }
+
+  // ── Validation ──
+  function validateStep(step) {
+    const err = document.getElementById('err' + step);
+    err.classList.remove('show');
+
+    if (step === 1) {
+      if (!document.getElementById('fullName').value.trim()) return showErr(err,'Please enter your full name.');
+      if (!document.getElementById('email').value.trim()) return showErr(err,'Please enter your email.');
+      if (!document.getElementById('location').value.trim()) return showErr(err,'Please enter your location.');
+      if (!cvFile) return showErr(err,'Please upload your resume.');
+    }
+    if (step === 2) {
+      if (tags.roles.length === 0) return showErr(err,'Please add at least one target job role.');
+      if (tags.locations.length === 0) return showErr(err,'Please add at least one preferred location.');
+      if (!document.getElementById('yoe').value) return showErr(err,'Please enter your years of experience.');
+    }
+    return true;
+  }
+
+  function showErr(el, msg) {
+    el.textContent = msg;
+    el.classList.add('show');
+    return false;
+  }
+
+  // ── File upload ──
+  function handleFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File too large. Max 5MB.');
+      return;
+    }
+    cvFile = file;
+    document.getElementById('fileName').textContent = file.name;
+    document.getElementById('fileChosen').style.display = 'flex';
+    document.getElementById('uploadZone').style.display = 'none';
+  }
+
+  function clearFile() {
+    cvFile = null;
+    document.getElementById('cvFile').value = '';
+    document.getElementById('fileChosen').style.display = 'none';
+    document.getElementById('uploadZone').style.display = 'block';
+  }
+
+  // ── Drag and drop ──
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag');
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      document.getElementById('cvFile').files = e.dataTransfer.files;
+      handleFile(document.getElementById('cvFile'));
+    }
+  });
+
+  // ── Tags ──
+  function addTag(e, inputId, containerId, key) {
+    if (e.key !== 'Enter' && e.key !== ',') return;
+    e.preventDefault();
+    const input = document.getElementById(inputId);
+    const val = input.value.trim().replace(/,$/, '');
+    if (!val || tags[key].includes(val)) { input.value = ''; return; }
+    tags[key].push(val);
+    renderTags(containerId, key);
+    input.value = '';
+  }
+
+  function renderTags(containerId, key) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = tags[key].map((t,i) =>
+      `<div class="tag">${t}<button onclick="removeTag(${i},'${containerId}','${key}')">×</button></div>`
+    ).join('');
+  }
+
+  function removeTag(i, containerId, key) {
+    tags[key].splice(i, 1);
+    renderTags(containerId, key);
+  }
+
+  // ── Template selection ──
+  function selectTemplate(n) {
+    selectedTemplate = n;
+    [1,2,3].forEach(i => document.getElementById('t'+i).classList.remove('selected'));
+    document.getElementById('t'+n).classList.add('selected');
+  }
+
+  // ── Submit ──
+  async function submitForm() {
+    const err = document.getElementById('err3');
+    err.classList.remove('show');
+
+    if (!selectedTemplate) return showErr(err, 'Please select a resume template.');
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Sending...';
+
+    // Read CV file as base64
+    let cvBase64 = '';
+    let cvFileName = '';
+    if (cvFile) {
+      cvBase64 = await toBase64(cvFile);
+      cvFileName = cvFile.name;
+    }
+
+    const payload = {
+      fullName: document.getElementById('fullName').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      location: document.getElementById('location').value.trim(),
+      linkedinUrl: document.getElementById('linkedin').value.trim(),
+      githubUrl: document.getElementById('github').value.trim(),
+      targetRoles: tags.roles,
+      targetLocations: tags.locations,
+      yearsOfExperience: document.getElementById('yoe').value,
+      expectedSalary: document.getElementById('salary').value.trim(),
+      noticePeriod: document.getElementById('notice').value,
+      matchThreshold: document.getElementById('threshold').value,
+      techStack: document.getElementById('techStack').value.trim(),
+      templateId: selectedTemplate,
+      cvFileName: cvFileName,
+      cvFileBase64: cvBase64,
+      submittedAt: new Date().toISOString()
+    };
+
+    try {
+      const res = await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok || res.status === 200) {
+        document.getElementById('step3').classList.remove('active');
+        document.getElementById('successScreen').classList.add('active');
+        document.querySelector('.progress-wrap').style.display = 'none';
+        // Mark all done
+        [1,2,3].forEach(i => {
+          const s = document.getElementById('s' + i);
+          const sn = document.getElementById('sn' + i);
+          s.classList.add('done');
+          sn.innerHTML = '✓';
+        });
+      } else {
+        throw new Error('Server error: ' + res.status);
+      }
+    } catch(e) {
+      showErr(err, 'Something went wrong. Please try again. (' + e.message + ')');
+      btn.disabled = false;
+      btn.innerHTML = '🚀 Start Applying';
+    }
+  }
+
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+</script>
+</body>
+</html>
