@@ -312,18 +312,25 @@
     display: grid;
     place-items: center;
   }
+  
+  /* Dynamic Previews Replacement */
   .template-preview {
     width: 100%;
     aspect-ratio: 3/4;
-    background: #fff;
+    background: var(--surface2);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
     overflow: hidden;
-    padding: 8px;
+    padding: 0;
   }
-  /* SVG resume previews */
-  .template-preview svg { width: 100%; height: 100%; }
+  .template-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Use 'contain' if your images include document white-space borders */
+    display: block;
+  }
+  
   .template-info {
     padding: 10px 12px;
     background: var(--surface2);
@@ -482,17 +489,6 @@
     </div>
   </div>
 
-  <div class="row-2">
-    <div class="field">
-      <label>LinkedIn URL</label>
-      <input type="text" id="linkedin" placeholder="linkedin.com/in/yourname">
-    </div>
-    <div class="field">
-      <label>GitHub URL</label>
-      <input type="text" id="github" placeholder="github.com/yourname">
-    </div>
-  </div>
-
   <div class="field">
     <label>Upload your current resume <span class="req">*</span></label>
     <div class="upload-zone" id="uploadZone">
@@ -590,44 +586,10 @@
 
   <div class="template-grid">
     <!-- Template 1: Jake's Resume -->
-    <div class="template-card" id="t1" onclick="selectTemplate(1)">
+    <div class="template-card" data-id="1" onclick="selectTemplate(this)">
       <div class="template-preview">
-        <svg viewBox="0 0 160 210" xmlns="http://www.w3.org/2000/svg">
-          <rect width="160" height="210" fill="#fff"/>
-          <!-- Header -->
-          <text x="80" y="18" text-anchor="middle" font-size="10" font-weight="700" fill="#111" font-family="serif">Jake Morrison</text>
-          <text x="80" y="27" text-anchor="middle" font-size="5" fill="#555" font-family="sans-serif">jake@email.com · linkedin.com/in/jake · github.com/jake</text>
-          <line x1="10" y1="31" x2="150" y2="31" stroke="#111" stroke-width="0.8"/>
-          <!-- Education -->
-          <text x="10" y="40" font-size="7" font-weight="700" fill="#111" font-family="sans-serif">EDUCATION</text>
-          <line x1="10" y1="42" x2="150" y2="42" stroke="#999" stroke-width="0.3"/>
-          <text x="10" y="50" font-size="5.5" font-weight="600" fill="#111" font-family="sans-serif">State University</text>
-          <text x="150" y="50" text-anchor="end" font-size="5" fill="#555" font-family="sans-serif">Aug 2020 – May 2024</text>
-          <text x="10" y="57" font-size="5" fill="#555" font-family="sans-serif">B.S. Computer Science · GPA: 3.8</text>
-          <!-- Experience -->
-          <text x="10" y="68" font-size="7" font-weight="700" fill="#111" font-family="sans-serif">EXPERIENCE</text>
-          <line x1="10" y1="70" x2="150" y2="70" stroke="#999" stroke-width="0.3"/>
-          <text x="10" y="78" font-size="5.5" font-weight="600" fill="#111" font-family="sans-serif">Software Engineer · Capgemini</text>
-          <text x="150" y="78" text-anchor="end" font-size="5" fill="#555" font-family="sans-serif">Apr 2024 – Present</text>
-          <circle cx="13" cy="85" r="1" fill="#555"/>
-          <text x="17" y="87" font-size="4.5" fill="#333" font-family="sans-serif">Built integration workflows using Azure Logic Apps</text>
-          <circle cx="13" cy="92" r="1" fill="#555"/>
-          <text x="17" y="94" font-size="4.5" fill="#333" font-family="sans-serif">Implemented API management via Azure APIM</text>
-          <circle cx="13" cy="99" r="1" fill="#555"/>
-          <text x="17" y="101" font-size="4.5" fill="#333" font-family="sans-serif">Developed ASP.NET MVC enterprise applications</text>
-          <!-- Projects -->
-          <text x="10" y="112" font-size="7" font-weight="700" fill="#111" font-family="sans-serif">PROJECTS</text>
-          <line x1="10" y1="114" x2="150" y2="114" stroke="#999" stroke-width="0.3"/>
-          <text x="10" y="122" font-size="5.5" font-weight="600" fill="#111" font-family="sans-serif">CHANEL Integration · Azure</text>
-          <circle cx="13" cy="129" r="1" fill="#555"/>
-          <text x="17" y="131" font-size="4.5" fill="#333" font-family="sans-serif">Delivered HFT solution for global data movement</text>
-          <!-- Skills -->
-          <text x="10" y="143" font-size="7" font-weight="700" fill="#111" font-family="sans-serif">TECHNICAL SKILLS</text>
-          <line x1="10" y1="145" x2="150" y2="145" stroke="#999" stroke-width="0.3"/>
-          <text x="10" y="153" font-size="5" fill="#333" font-family="sans-serif"><tspan font-weight="600">Languages:</tspan> C#, Java, SQL</text>
-          <text x="10" y="160" font-size="5" fill="#333" font-family="sans-serif"><tspan font-weight="600">Frameworks:</tspan> .NET Core, ASP.NET MVC, Entity Framework</text>
-          <text x="10" y="167" font-size="5" fill="#333" font-family="sans-serif"><tspan font-weight="600">Cloud:</tspan> Azure (Logic Apps, APIM, Service Bus, ADF)</text>
-        </svg>
+        <!-- REPLACE SRC WITH YOUR BACKEND IMAGE URL -->
+        <img src="https://github.com/user-attachments/assets/29d9e8f1-1651-4325-8efa-5cfe97873ffe" alt="Resume Template 1 Preview">
       </div>
       <div class="template-info">
         <div class="template-name">Jake's Resume</div>
@@ -636,48 +598,10 @@
     </div>
 
     <!-- Template 2: Two-column Modern -->
-    <div class="template-card" id="t2" onclick="selectTemplate(2)">
+    <div class="template-card" data-id="2" onclick="selectTemplate(this)">
       <div class="template-preview">
-        <svg viewBox="0 0 160 210" xmlns="http://www.w3.org/2000/svg">
-          <rect width="160" height="210" fill="#fff"/>
-          <!-- Left sidebar -->
-          <rect width="52" height="210" fill="#1E293B"/>
-          <!-- Avatar placeholder -->
-          <circle cx="26" cy="28" r="14" fill="#334155"/>
-          <text x="26" y="32" text-anchor="middle" font-size="10" fill="#94A3B8" font-family="sans-serif">JM</text>
-          <!-- Sidebar content -->
-          <text x="26" y="55" text-anchor="middle" font-size="5.5" font-weight="700" fill="#fff" font-family="sans-serif">CONTACT</text>
-          <text x="26" y="63" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">jake@email.com</text>
-          <text x="26" y="70" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">+91 89602 75814</text>
-          <text x="26" y="77" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">Bangalore, India</text>
-          <text x="26" y="90" text-anchor="middle" font-size="5.5" font-weight="700" fill="#fff" font-family="sans-serif">SKILLS</text>
-          <text x="26" y="98" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">C# · Java · SQL</text>
-          <text x="26" y="105" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">.NET Core</text>
-          <text x="26" y="112" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">ASP.NET MVC</text>
-          <text x="26" y="119" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">Azure Cloud</text>
-          <text x="26" y="126" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">SQL Server</text>
-          <text x="26" y="138" text-anchor="middle" font-size="5.5" font-weight="700" fill="#fff" font-family="sans-serif">EDUCATION</text>
-          <text x="26" y="146" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">B.Tech CSE</text>
-          <text x="26" y="153" text-anchor="middle" font-size="4" fill="#94A3B8" font-family="sans-serif">GLA University</text>
-          <text x="26" y="160" text-anchor="middle" font-size="4" fill="#64748B" font-family="sans-serif">2020 – 2024</text>
-          <!-- Right content -->
-          <text x="62" y="18" font-size="11" font-weight="700" fill="#0F172A" font-family="sans-serif">Jake Morrison</text>
-          <text x="62" y="26" font-size="5.5" fill="#6366F1" font-family="sans-serif">Software Engineer</text>
-          <line x1="58" y1="30" x2="155" y2="30" stroke="#E2E8F0" stroke-width="0.5"/>
-          <text x="62" y="39" font-size="6" font-weight="700" fill="#0F172A" font-family="sans-serif">EXPERIENCE</text>
-          <text x="62" y="47" font-size="5.5" font-weight="600" fill="#0F172A" font-family="sans-serif">Software Engineer</text>
-          <text x="62" y="53" font-size="4.5" fill="#6366F1" font-family="sans-serif">Capgemini · Apr 2024–Present</text>
-          <circle cx="64" cy="60" r="1" fill="#6366F1"/>
-          <text x="68" y="62" font-size="4" fill="#475569" font-family="sans-serif">Azure integration workflows</text>
-          <circle cx="64" cy="67" r="1" fill="#6366F1"/>
-          <text x="68" y="69" font-size="4" fill="#475569" font-family="sans-serif">API management via APIM</text>
-          <circle cx="64" cy="74" r="1" fill="#6366F1"/>
-          <text x="68" y="76" font-size="4" fill="#475569" font-family="sans-serif">ASP.NET MVC applications</text>
-          <text x="62" y="87" font-size="6" font-weight="700" fill="#0F172A" font-family="sans-serif">PROJECTS</text>
-          <text x="62" y="95" font-size="5.5" font-weight="600" fill="#0F172A" font-family="sans-serif">CHANEL — Azure Integration</text>
-          <circle cx="64" cy="102" r="1" fill="#6366F1"/>
-          <text x="68" y="104" font-size="4" fill="#475569" font-family="sans-serif">HFT secure data movement solution</text>
-        </svg>
+        <!-- REPLACE SRC WITH YOUR BACKEND IMAGE URL -->
+        <img src="https://github.com/user-attachments/assets/0ec53688-a7b4-4b50-927d-377cdebe8346"" alt="Resume Template 2 Preview">
       </div>
       <div class="template-info">
         <div class="template-name">Modern Sidebar</div>
@@ -686,50 +610,10 @@
     </div>
 
     <!-- Template 3: Minimal Clean -->
-    <div class="template-card" id="t3" onclick="selectTemplate(3)">
+    <div class="template-card" data-id="3" onclick="selectTemplate(this)">
       <div class="template-preview">
-        <svg viewBox="0 0 160 210" xmlns="http://www.w3.org/2000/svg">
-          <rect width="160" height="210" fill="#FAFAFA"/>
-          <!-- Top accent bar -->
-          <rect width="160" height="4" fill="#6366F1"/>
-          <!-- Header -->
-          <text x="12" y="22" font-size="13" font-weight="700" fill="#111" font-family="sans-serif">Jake Morrison</text>
-          <text x="12" y="31" font-size="5" fill="#6366F1" font-family="sans-serif">Software Engineer · Bangalore, India</text>
-          <text x="12" y="39" font-size="4.5" fill="#888" font-family="sans-serif">jake@email.com · linkedin.com/jake · github.com/jake</text>
-          <!-- Divider -->
-          <line x1="12" y1="44" x2="148" y2="44" stroke="#E5E5E5" stroke-width="0.5"/>
-          <!-- Summary -->
-          <text x="12" y="53" font-size="4.5" fill="#444" font-family="sans-serif">Performance-driven engineer with expertise in .NET and Azure</text>
-          <text x="12" y="59" font-size="4.5" fill="#444" font-family="sans-serif">integration services. Building scalable enterprise solutions.</text>
-          <line x1="12" y1="64" x2="148" y2="64" stroke="#E5E5E5" stroke-width="0.5"/>
-          <!-- Experience -->
-          <rect x="12" y="68" width="2" height="16" fill="#6366F1" rx="1"/>
-          <text x="18" y="76" font-size="6" font-weight="700" fill="#111" font-family="sans-serif">Experience</text>
-          <text x="18" y="83" font-size="5" fill="#888" font-family="sans-serif">Software Engineer · Capgemini · 2024–Present</text>
-          <text x="18" y="91" font-size="4.5" fill="#555" font-family="sans-serif">· Azure Logic Apps, APIM, Service Bus</text>
-          <text x="18" y="97" font-size="4.5" fill="#555" font-family="sans-serif">· ASP.NET MVC enterprise applications</text>
-          <text x="18" y="103" font-size="4.5" fill="#555" font-family="sans-serif">· CI/CD via Azure DevOps pipelines</text>
-          <line x1="12" y1="108" x2="148" y2="108" stroke="#E5E5E5" stroke-width="0.5"/>
-          <!-- Skills -->
-          <rect x="12" y="112" width="2" height="16" fill="#6366F1" rx="1"/>
-          <text x="18" y="120" font-size="6" font-weight="700" fill="#111" font-family="sans-serif">Skills</text>
-          <!-- Skill pills -->
-          <rect x="18" y="123" width="22" height="7" rx="3" fill="#EEF2FF"/>
-          <text x="29" y="128.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">C#</text>
-          <rect x="44" y="123" width="22" height="7" rx="3" fill="#EEF2FF"/>
-          <text x="55" y="128.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">Java</text>
-          <rect x="70" y="123" width="30" height="7" rx="3" fill="#EEF2FF"/>
-          <text x="85" y="128.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">.NET Core</text>
-          <rect x="18" y="133" width="28" height="7" rx="3" fill="#EEF2FF"/>
-          <text x="32" y="138.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">Azure</text>
-          <rect x="50" y="133" width="32" height="7" rx="3" fill="#EEF2FF"/>
-          <text x="66" y="138.5" text-anchor="middle" font-size="4" fill="#6366F1" font-family="sans-serif">SQL Server</text>
-          <line x1="12" y1="144" x2="148" y2="144" stroke="#E5E5E5" stroke-width="0.5"/>
-          <!-- Education -->
-          <rect x="12" y="148" width="2" height="16" fill="#6366F1" rx="1"/>
-          <text x="18" y="156" font-size="6" font-weight="700" fill="#111" font-family="sans-serif">Education</text>
-          <text x="18" y="163" font-size="5" fill="#888" font-family="sans-serif">B.Tech Computer Science · GLA University · 2024</text>
-        </svg>
+        <!-- REPLACE SRC WITH YOUR BACKEND IMAGE URL -->
+        <img src="https://github.com/user-attachments/assets/61e11526-e9a2-4cac-b4f6-e6f68157d2c0" alt="Resume Template 3 Preview">
       </div>
       <div class="template-info">
         <div class="template-name">Minimal Clean</div>
@@ -754,7 +638,7 @@
 
 <script>
   // ── Config ──
-  const N8N_WEBHOOK_URL = 'https://resume16.app.n8n.cloud/webhook-test/onboard';
+  const N8N_WEBHOOK_URL = 'YOUR_N8N_WEBHOOK_URL_HERE';
 
   // ── State ──
   let currentStep = 1;
@@ -891,11 +775,15 @@
     renderTags(containerId, key);
   }
 
-  // ── Template selection ──
-  function selectTemplate(n) {
-    selectedTemplate = n;
-    [1,2,3].forEach(i => document.getElementById('t'+i).classList.remove('selected'));
-    document.getElementById('t'+n).classList.add('selected');
+  // ── Dynamic Template Selection ──
+  function selectTemplate(element) {
+    selectedTemplate = parseInt(element.getAttribute('data-id'));
+    
+    document.querySelectorAll('.template-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+    
+    element.classList.add('selected');
   }
 
   // ── Submit ──
@@ -948,7 +836,11 @@
         document.getElementById('step3').classList.remove('active');
         document.getElementById('successScreen').classList.add('active');
         document.querySelector('.progress-wrap').style.display = 'none';
-        // Mark all done
+        
+        // Clean up UI selections safely regardless of dynamic card lengths
+        document.querySelectorAll('.template-card').forEach(card => card.classList.remove('selected'));
+
+        // Mark all milestones complete
         [1,2,3].forEach(i => {
           const s = document.getElementById('s' + i);
           const sn = document.getElementById('sn' + i);
